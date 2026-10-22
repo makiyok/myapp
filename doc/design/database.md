@@ -115,7 +115,7 @@ erDiagram
 | カラム | 型 | 制約 | 説明 |
 |-|-|-|-|
 | entry_id | bigint | not null, FK → entries.id | 所属する申し込み |
-| visit_menu_id | bigint | not null, FK → visit_menus.id | 買ったメニュー |
+| visit_menu_id | bigint | not null, FK → visit_menus.id | 申し込んだメニュー |
 | quantity | unsigned int | not null | 人数 |
 | unit_price | unsigned int | not null | 申し込み時点の単価（円）。あとでメニューの価格が変わっても申し込みは変わらない |
 
@@ -185,7 +185,7 @@ erDiagram
 
 このほか、慰問が公開中でないとき、メニューがその慰問のものでないときも申し込みを作らない。
 
-同時に申し込みされた場合の競合（確認と申し込み作成の間に他の人が買う）はコアでは扱わない。拡張 E2 でトランザクションと行ロックを入れる。
+同時に申し込みされた場合の競合（確認と申し込み作成の間に他の人が申し込む）はコアでは扱わない。拡張 E2 でトランザクションと行ロックを入れる。
 
 ## 未決定の点
 

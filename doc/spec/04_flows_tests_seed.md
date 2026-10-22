@@ -10,8 +10,8 @@ sequenceDiagram
     participant A as アプリ（Laravel）
     participant S as Stripe
 
-    U->>A: メニューと枚数を選んで「支払いへ進む」
-    A->>A: 残り枚数と販売期間をチェック
+    U->>A: メニューと人数を選んで「支払いへ進む」
+    A->>A: 残り人数と販売期間をチェック
     A->>A: entries（pending）と entry_items を作成
     A->>S: Checkout Session を作成（line_items に price_data、金額は JPY）
     S-->>A: session.id と決済ページの URL
@@ -36,9 +36,9 @@ sequenceDiagram
 - `metadata.entry_id` に申し込み ID を入れておき、Webhook で申し込みを特定する
 - `success_url` は `/entries/{entry}/complete?session_id={CHECKOUT_SESSION_ID}`、`cancel_url` は `/entries/{entry}/cancel`
 - Webhook は `POST /stripe/webhook`。CSRF の除外対象にし、`Webhook::constructEvent()` で署名を検証する
-- 扱う慰問はコアでは `checkout.session.completed` のみ。拡張 E3 で `charge.refunded` を追加
+- 扱う通知（Stripe のイベント）はコアでは `checkout.session.completed` のみ。拡張 E3 で `charge.refunded` を追加
 - Webhook と完了ページのどちらが先に来ても壊れないように、`paid` への更新は「`pending` のときだけ更新する」条件付き更新にする
-- 合計 0 円（無料券だけ）の申し込みは Stripe を通さず、その場で `paid` にする
+- 合計 0 円（無料のメニューだけ）の申し込みは Stripe を通さず、その場で `paid` にする
 
 ### 環境変数
 
@@ -59,7 +59,7 @@ sequenceDiagram
 
 | メール | 送信タイミング | 宛先 | 内容 |
 |-|-|-|-|
-| 申し込み完了 | 申し込みが `paid` になったとき | 申し込み者 | 慰問名、日時、会場、メニューと枚数、合計金額、申し込み詳細への URL |
+| 申し込み完了 | 申し込みが `paid` になったとき | 申し込み者 | 慰問名、日時、会場、メニューと人数、合計金額、申し込み詳細への URL |
 
 - Mailable（または Notification）1つ。Markdown メールテンプレート
 - 開発は Mailpit（`http://localhost:8025`）で確認する
@@ -78,11 +78,11 @@ sequenceDiagram
 | T4 | 慰問の更新 | 所有者は更新できる。他の福祉施設は 403 |
 | T5 | 慰問の削除 | 支払い済みの申し込みがあると削除できない |
 | T6 | 申し込み（正常） | 申し込みが `pending` で作られ、`entry_items` と合計金額が正しい。Stripe はモックする |
-| T7 | 申し込み（定員超え） | 残り枚数を超える枚数はエラーになり、申し込みが作られない |
+| T7 | 申し込み（定員超え） | 残り人数を超える人数はエラーになり、申し込みが作られない |
 | T8 | 申し込み（販売期間外） | 販売開始前・終了後はエラーになる |
-| T9 | Webhook（正常） | 正しい署名の `checkout.session.completed` で申し込みが `paid` になり、枚数分の `passes` が発行され、メールが送られる（`Mail::fake()`） |
+| T9 | Webhook（正常） | 正しい署名の `checkout.session.completed` で申し込みが `paid` になり、人数分の `passes` が発行され、メールが送られる（`Mail::fake()`） |
 | T10 | Webhook（不正な署名） | 400 を返し、申し込みは変わらない |
-| T11 | Webhook（二重送信） | 同じ慰問が2回来ても参加証が二重に発行されない |
+| T11 | Webhook（二重送信） | 同じ通知が2回来ても参加証が二重に発行されない |
 | T12 | 申し込みの閲覧 | 本人と福祉施設と管理者は見られる。他人は 403 |
 | T13 | 管理者の非公開 | 管理者は `unpublished` にできる。福祉施設は他人の慰問を変更できない |
 
@@ -97,8 +97,8 @@ Stripe のモック方針: Checkout Session の作成はサービスクラス（
 | 管理者 | 1 | `admin@example.com` / `password` |
 | 福祉施設 | 2 | `facility1@example.com`、`facility2@example.com` / `password` |
 | 慰問者 | 3 | `visitor1@example.com` 〜 `visitor3@example.com` / `password` |
-| 慰問 | 6 | 公開 4（うち 1 は開催済み）、下書き 1、非公開 1。八幡平の体験慰問を想定した題名（例: 岩手山 朝焼けトレッキング、地熱蒸し料理教室、雪上ヨガ） |
-| メニュー | 各 1〜3 | 一般 3,000 円、学生 1,500 円、無料券 0 円 など。定員 5〜30 |
+| 慰問 | 6 | 公開 4（うち 1 は開催済み）、下書き 1、非公開 1。福祉施設への慰問を想定した題名（例: 歌と演奏の慰問会、紙芝居と読み聞かせ、手品ショー） |
+| メニュー | 各 1〜3 | 歌・演奏 3,000 円、読み聞かせ 1,500 円、見学のみ 0 円 など。定員 5〜30 |
 | 申し込み | 数件 | `paid` の申し込みと、15 分以上前の `pending` を混ぜる |
 
 - パスワードは全員 `password`。本番にはシーダーの管理者以外を投入しない
