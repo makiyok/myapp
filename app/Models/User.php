@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -21,6 +23,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string $password
+ * @property UserRole $role
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
@@ -45,7 +48,43 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => UserRole::class,
         ];
+    }
+
+    /**
+     * 募集している慰問
+     *
+     * @return HasMany<Visit, $this>
+     */
+    public function visits(): HasMany
+    {
+        return $this->hasMany(Visit::class, 'facility_id');
+    }
+
+    /**
+     * 自分が申し込み者の申し込み
+     *
+     * @return HasMany<Entry, $this>
+     */
+    public function entries(): HasMany
+    {
+        return $this->hasMany(Entry::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === UserRole::Admin;
+    }
+
+    public function isFacility(): bool
+    {
+        return $this->role === UserRole::Facility;
+    }
+
+    public function isVisitor(): bool
+    {
+        return $this->role === UserRole::Visitor;
     }
 
     /**

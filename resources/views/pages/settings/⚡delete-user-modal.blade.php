@@ -19,6 +19,12 @@ new class extends Component {
             'password' => $this->currentPasswordRules(),
         ]);
 
+        if (Auth::user()->visits()->exists()) {
+            $this->addError('password', '慰問が残っているため退会できません。先に慰問を削除してください。');
+
+            return;
+        }
+
         tap(Auth::user(), $logout(...))->delete();
 
         $this->redirect('/', navigate: true);

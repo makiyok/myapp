@@ -15,6 +15,12 @@
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
+
+                    @if (auth()->user()->isFacility())
+                        <flux:sidebar.item icon="calendar" :href="route('facility.visits.index')" :current="request()->routeIs('facility.visits.*')" wire:navigate>
+                            慰問管理
+                        </flux:sidebar.item>
+                    @endif
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 

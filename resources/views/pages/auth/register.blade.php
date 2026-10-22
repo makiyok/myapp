@@ -30,6 +30,12 @@
                 placeholder="email@example.com"
             />
 
+            <!-- Role -->
+            <flux:radio.group name="role" error:name="role" :label="__('Account type')" :value="old('role', 'visitor')">
+                <flux:radio value="visitor" :label="\App\Enums\UserRole::Visitor->label()" />
+                <flux:radio value="facility" :label="\App\Enums\UserRole::Facility->label()" />
+            </flux:radio.group>
+
             <!-- Password -->
             <flux:input
                 name="password"

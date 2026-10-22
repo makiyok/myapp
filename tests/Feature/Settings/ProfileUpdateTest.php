@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Models\Visit;
 use Livewire\Livewire;
 
 test('profile page is displayed', function () {
@@ -72,4 +73,21 @@ test('correct password must be provided to delete account', function () {
     $response->assertHasErrors(['password']);
 
     expect($user->fresh())->not->toBeNull();
+});
+
+test('an facility with visits cannot delete their account', function () {
+    $facility = User::factory()->facility()->create();
+    Visit::factory()->for($facility, 'facility')->create();
+
+    $this->actingAs($facility);
+
+    Livewire::test('pages::settings.delete-user-modal')
+        ->set('password', 'password')
+        ->call('deleteUser')
+        ->assertHasErrors(['password'])
+        ->assertSee('慰問が残っているため退会できません。')
+        ->assertNoRedirect();
+
+    expect($facility->fresh())->not->toBeNull();
+    expect(auth()->check())->toBeTrue();
 });
