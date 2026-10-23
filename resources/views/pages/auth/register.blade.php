@@ -31,10 +31,26 @@
             />
 
             <!-- Role -->
-            <flux:radio.group name="role" error:name="role" :label="__('Account type')" :value="old('role', 'visitor')">
-                <flux:radio value="visitor" :label="\App\Enums\UserRole::Visitor->label()" />
-                <flux:radio value="facility" :label="\App\Enums\UserRole::Facility->label()" />
-            </flux:radio.group>
+            <fieldset class="grid gap-2">
+                <legend class="mb-2 text-sm font-medium text-zinc-800 dark:text-white">登録の種類</legend>
+
+                <div class="flex flex-wrap gap-3">
+                    @foreach ([\App\Enums\UserRole::Visitor, \App\Enums\UserRole::Facility] as $role)
+                        <label class="flex cursor-pointer items-center gap-2 rounded-2xl border-2 border-zinc-200 px-4 py-2 text-zinc-800 has-checked:border-accent has-checked:bg-zinc-50 dark:text-white dark:has-checked:bg-white/10">
+                            <input
+                                type="radio"
+                                name="role"
+                                value="{{ $role->value }}"
+                                class="size-4 accent-accent"
+                                @checked(old('role', \App\Enums\UserRole::Visitor->value) === $role->value)
+                            />
+                            <span>{{ $role->label() }}</span>
+                        </label>
+                    @endforeach
+                </div>
+
+                <flux:error name="role" />
+            </fieldset>
 
             <!-- Password -->
             <flux:input

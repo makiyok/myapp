@@ -11,6 +11,11 @@
 @theme {
     --font-sans: 'Zen Maru Gothic', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
+    /* 細い文字は読みにくいので、本文を太字にし、見出しとボタンはさらに太くして差をつける */
+    --font-weight-normal: 700;
+    --font-weight-medium: 700;
+    --font-weight-bold: 900;
+
     --color-white: #fffdf7;
 
     --color-zinc-50: #fff6e6;
@@ -69,6 +74,7 @@ select:focus[data-flux-control] {
 
 /* 絵本のようなやわらかい見た目 */
 body {
+    font-weight: var(--font-weight-normal);
     background-image: radial-gradient(var(--color-zinc-200) 1.5px, transparent 1.5px);
     background-size: 28px 28px;
 }
