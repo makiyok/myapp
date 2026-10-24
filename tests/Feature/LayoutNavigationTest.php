@@ -60,6 +60,16 @@ test('admins also see visit and user management', function () {
         ->assertDontSee('福祉施設メニュー');
 });
 
+test('settings is only in the user menu, not in the top menu', function () {
+    $this->actingAs(User::factory()->create());
+
+    $html = (string) renderAppLayout();
+
+    expect(substr_count($html, 'href="'.route('profile.edit').'"'))->toBe(1)
+        ->and($html)->toContain('設定')
+        ->and($html)->toContain('ログアウト');
+});
+
 test('the logo at the top left reads 慰問ステージ', function () {
     $this->get(route('diary.index'))
         ->assertOk()

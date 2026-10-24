@@ -20,8 +20,6 @@
             $navItems[] = ['label' => '慰問管理', 'href' => url('/admin/visits'), 'icon' => 'shield-check', 'current' => request()->is('admin/visits', 'admin/visits/*')];
             $navItems[] = ['label' => 'ユーザー管理', 'href' => url('/admin/users'), 'icon' => 'users', 'current' => request()->is('admin/users', 'admin/users/*')];
         }
-
-        $navItems[] = ['label' => '設定', 'href' => route('profile.edit'), 'icon' => 'cog', 'current' => request()->is('settings', 'settings/*')];
     }
 @endphp
 
