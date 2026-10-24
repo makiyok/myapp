@@ -60,6 +60,13 @@ test('admins also see visit and user management', function () {
         ->assertDontSee('福祉施設メニュー');
 });
 
+test('the logo at the top left reads 慰問ステージ', function () {
+    $this->get(route('diary.index'))
+        ->assertOk()
+        ->assertSee('data-flux-brand', escape: false)
+        ->assertSeeInOrder(['data-flux-brand', '慰問ステージ'], escape: false);
+});
+
 test('a logged-in page still renders inside the header layout', function () {
     $this->actingAs(User::factory()->facility()->create())
         ->get(route('facility.visits.index'))
