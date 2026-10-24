@@ -21,9 +21,10 @@ new #[Title('慰問一覧')] class extends Component {
 }; ?>
 
 <section class="w-full space-y-6">
-    {{-- 慰問日記のページができたら、div を route() への a に差し替える --}}
-    <div
-        class="flex items-center gap-4 rounded-3xl border-2 border-accent bg-zinc-50 p-4 sm:p-6 dark:bg-white/10"
+    <a
+        href="{{ route('diary.index') }}"
+        wire:navigate
+        class="flex items-center gap-4 rounded-3xl border-2 border-accent bg-zinc-50 p-4 transition hover:bg-zinc-100 sm:p-6 dark:bg-white/10 dark:hover:bg-white/15"
         data-test="visit-diary-banner"
     >
         <div class="flex size-12 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
@@ -35,8 +36,8 @@ new #[Title('慰問一覧')] class extends Component {
             <flux:text>慰問の様子を、写真とことばでお届けします。</flux:text>
         </div>
 
-        <flux:badge color="zinc" class="shrink-0">準備中</flux:badge>
-    </div>
+        <flux:icon.chevron-right class="shrink-0 text-accent-content" />
+    </a>
 
     <flux:heading size="xl" level="1">慰問一覧</flux:heading>
 

@@ -39,10 +39,10 @@ test('visits are listed with the nearest date first', function () {
     $this->get(route('home'))->assertSeeInOrder(['来週の慰問', '来月の慰問']);
 });
 
-test('the visit diary banner is shown above the list as coming soon', function () {
+test('the visit diary banner above the list links to the diary', function () {
     $this->get(route('home'))
         ->assertOk()
-        ->assertSeeInOrder(['慰問日記', '準備中', '慰問一覧']);
+        ->assertSeeInOrder([route('diary.index'), '慰問日記', '慰問一覧'], escape: false);
 });
 
 test('logged in visitors can see the list', function () {
