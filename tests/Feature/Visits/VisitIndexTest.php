@@ -39,6 +39,12 @@ test('visits are listed with the nearest date first', function () {
     $this->get(route('home'))->assertSeeInOrder(['来週の慰問', '来月の慰問']);
 });
 
+test('the visit diary banner is shown above the list as coming soon', function () {
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSeeInOrder(['慰問日記', '準備中', '慰問一覧']);
+});
+
 test('logged in visitors can see the list', function () {
     Visit::factory()->published()->create(['title' => '夏祭り']);
 
