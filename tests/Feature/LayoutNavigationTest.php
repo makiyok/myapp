@@ -37,11 +37,11 @@ test('visitors see my passes and settings but no facility or admin links', funct
         ->assertDontSee('ユーザー管理');
 });
 
-test('facilities also see the facility menu', function () {
+test('facilities see the facility menu instead of my passes', function () {
     $this->actingAs(User::factory()->facility()->create());
 
     renderAppLayout()
-        ->assertSee('マイ参加証')
+        ->assertDontSee('マイ参加証')
         ->assertSee('福祉施設メニュー')
         ->assertSee(route('facility.visits.index'))
         ->assertDontSee('慰問管理')

@@ -7,7 +7,10 @@
     ];
 
     if ($user) {
-        $navItems[] = ['label' => 'マイ参加証', 'href' => url('/entries'), 'icon' => 'ticket', 'current' => request()->is('entries', 'entries/*')];
+        // 福祉施設のメニューには出さない（申し込み自体はできるので、画面は残す）
+        if (! $user->isFacility()) {
+            $navItems[] = ['label' => 'マイ参加証', 'href' => url('/entries'), 'icon' => 'ticket', 'current' => request()->is('entries', 'entries/*')];
+        }
 
         if ($user->isFacility()) {
             $navItems[] = ['label' => '福祉施設メニュー', 'href' => route('facility.visits.index'), 'icon' => 'pencil-square', 'current' => request()->routeIs('facility.*')];
