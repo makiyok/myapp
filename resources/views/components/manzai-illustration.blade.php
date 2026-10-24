@@ -2,19 +2,19 @@
     /**
      * 観覧する高齢者10人（後ろの列5人、前の列5人）。
      *
-     * @var list<array{x: int, y: int, hair: string, hairColor: string, clothes: string, glasses: bool, clap: bool}> $audience
+     * @var list<array{x: int, y: int, hair: string, hairColor: string, clothes: string, glasses: bool, pose: string}> $audience
      */
     $audience = [
-        ['x' => 160, 'y' => 335, 'hair' => 'bun', 'hairColor' => '#d9d4cc', 'clothes' => '#7cae7a', 'glasses' => false, 'clap' => true],
-        ['x' => 280, 'y' => 335, 'hair' => 'bald', 'hairColor' => '#d9d4cc', 'clothes' => '#8fb3de', 'glasses' => true, 'clap' => false],
-        ['x' => 400, 'y' => 335, 'hair' => 'curly', 'hairColor' => '#c8c3bd', 'clothes' => '#d98c8c', 'glasses' => false, 'clap' => true],
-        ['x' => 520, 'y' => 335, 'hair' => 'cap', 'hairColor' => '#6d7f9e', 'clothes' => '#e9a23b', 'glasses' => false, 'clap' => false],
-        ['x' => 640, 'y' => 335, 'hair' => 'short', 'hairColor' => '#f2efea', 'clothes' => '#b59ad6', 'glasses' => true, 'clap' => true],
-        ['x' => 90, 'y' => 420, 'hair' => 'curly', 'hairColor' => '#e8e4de', 'clothes' => '#e9a23b', 'glasses' => true, 'clap' => false],
-        ['x' => 245, 'y' => 420, 'hair' => 'short', 'hairColor' => '#d9d4cc', 'clothes' => '#6fa8a0', 'glasses' => false, 'clap' => true],
-        ['x' => 400, 'y' => 420, 'hair' => 'bald', 'hairColor' => '#e8e4de', 'clothes' => '#c9a27c', 'glasses' => false, 'clap' => true],
-        ['x' => 555, 'y' => 420, 'hair' => 'bun', 'hairColor' => '#f2efea', 'clothes' => '#7cae7a', 'glasses' => true, 'clap' => false],
-        ['x' => 710, 'y' => 420, 'hair' => 'cap', 'hairColor' => '#8b5e3c', 'clothes' => '#8fb3de', 'glasses' => false, 'clap' => true],
+        ['x' => 160, 'y' => 335, 'hair' => 'bun', 'hairColor' => '#d9d4cc', 'clothes' => '#7cae7a', 'glasses' => false, 'pose' => 'clap'],
+        ['x' => 280, 'y' => 335, 'hair' => 'bald', 'hairColor' => '#d9d4cc', 'clothes' => '#8fb3de', 'glasses' => true, 'pose' => 'none'],
+        ['x' => 400, 'y' => 335, 'hair' => 'curly', 'hairColor' => '#c8c3bd', 'clothes' => '#d98c8c', 'glasses' => false, 'pose' => 'clap'],
+        ['x' => 520, 'y' => 335, 'hair' => 'cap', 'hairColor' => '#6d7f9e', 'clothes' => '#e9a23b', 'glasses' => false, 'pose' => 'none'],
+        ['x' => 640, 'y' => 335, 'hair' => 'short', 'hairColor' => '#f2efea', 'clothes' => '#b59ad6', 'glasses' => true, 'pose' => 'clap'],
+        ['x' => 90, 'y' => 420, 'hair' => 'curly', 'hairColor' => '#e8e4de', 'clothes' => '#e9a23b', 'glasses' => true, 'pose' => 'none'],
+        ['x' => 245, 'y' => 420, 'hair' => 'short', 'hairColor' => '#d9d4cc', 'clothes' => '#6fa8a0', 'glasses' => false, 'pose' => 'clap'],
+        ['x' => 400, 'y' => 420, 'hair' => 'bald', 'hairColor' => '#e8e4de', 'clothes' => '#c9a27c', 'glasses' => false, 'pose' => 'clap'],
+        ['x' => 555, 'y' => 420, 'hair' => 'bun', 'hairColor' => '#f2efea', 'clothes' => '#7cae7a', 'glasses' => true, 'pose' => 'none'],
+        ['x' => 710, 'y' => 420, 'hair' => 'cap', 'hairColor' => '#8b5e3c', 'clothes' => '#8fb3de', 'glasses' => false, 'pose' => 'clap'],
     ];
 
     $line = '#46342a';
@@ -103,101 +103,14 @@
 
     {{-- 観覧する高齢者たち --}}
     @foreach ($audience as $person)
-        @php
-            ['x' => $x, 'y' => $y] = $person;
-        @endphp
-
-        <g>
-            <path
-                d="M{{ $x - 40 }} {{ $y + 84 }} Q{{ $x - 40 }} {{ $y + 32 }} {{ $x }} {{ $y + 30 }} Q{{ $x + 40 }} {{ $y + 32 }} {{ $x + 40 }} {{ $y + 84 }} Z"
-                fill="{{ $person['clothes'] }}"
-                stroke="{{ $line }}"
-                stroke-width="3"
-            />
-            <circle cx="{{ $x }}" cy="{{ $y }}" r="28" fill="{{ $skin }}" stroke="{{ $line }}" stroke-width="3" />
-
-            @switch($person['hair'])
-                @case('bun')
-                    <circle cx="{{ $x }}" cy="{{ $y - 36 }}" r="11" fill="{{ $person['hairColor'] }}" stroke="{{ $line }}" stroke-width="3" />
-                    <path
-                        d="M{{ $x - 29 }} {{ $y + 2 }} Q{{ $x - 31 }} {{ $y - 32 }} {{ $x }} {{ $y - 31 }} Q{{ $x + 31 }} {{ $y - 32 }} {{ $x + 29 }} {{ $y + 2 }} Q{{ $x + 20 }} {{ $y - 14 }} {{ $x }} {{ $y - 16 }} Q{{ $x - 20 }} {{ $y - 14 }} {{ $x - 29 }} {{ $y + 2 }} Z"
-                        fill="{{ $person['hairColor'] }}"
-                        stroke="{{ $line }}"
-                        stroke-width="3"
-                        stroke-linejoin="round"
-                    />
-                    @break
-                @case('short')
-                    <path
-                        d="M{{ $x - 29 }} {{ $y + 2 }} Q{{ $x - 31 }} {{ $y - 32 }} {{ $x }} {{ $y - 31 }} Q{{ $x + 31 }} {{ $y - 32 }} {{ $x + 29 }} {{ $y + 2 }} Q{{ $x + 20 }} {{ $y - 14 }} {{ $x }} {{ $y - 16 }} Q{{ $x - 20 }} {{ $y - 14 }} {{ $x - 29 }} {{ $y + 2 }} Z"
-                        fill="{{ $person['hairColor'] }}"
-                        stroke="{{ $line }}"
-                        stroke-width="3"
-                        stroke-linejoin="round"
-                    />
-                    @break
-                @case('curly')
-                    @foreach ([[-22, -14, 10], [-12, -25, 10], [0, -29, 10], [12, -25, 10], [22, -14, 10], [-28, 0, 8], [28, 0, 8]] as [$dx, $dy, $r])
-                        <circle cx="{{ $x + $dx }}" cy="{{ $y + $dy }}" r="{{ $r }}" fill="{{ $person['hairColor'] }}" stroke="{{ $line }}" stroke-width="2.5" />
-                    @endforeach
-                    @break
-                @case('bald')
-                    <ellipse cx="{{ $x - 28 }}" cy="{{ $y + 2 }}" rx="7" ry="10" fill="{{ $person['hairColor'] }}" stroke="{{ $line }}" stroke-width="2.5" />
-                    <ellipse cx="{{ $x + 28 }}" cy="{{ $y + 2 }}" rx="7" ry="10" fill="{{ $person['hairColor'] }}" stroke="{{ $line }}" stroke-width="2.5" />
-                    <path d="M{{ $x - 9 }} {{ $y - 19 }} q9 -6 18 0" fill="none" stroke="#fffdf7" stroke-width="3" stroke-linecap="round" />
-                    @break
-                @case('cap')
-                    <path
-                        d="M{{ $x - 29 }} {{ $y - 14 }} Q{{ $x - 27 }} {{ $y - 40 }} {{ $x }} {{ $y - 39 }} Q{{ $x + 27 }} {{ $y - 40 }} {{ $x + 29 }} {{ $y - 14 }} Z"
-                        fill="{{ $person['hairColor'] }}"
-                        stroke="{{ $line }}"
-                        stroke-width="3"
-                        stroke-linejoin="round"
-                    />
-                    <ellipse cx="{{ $x + 6 }}" cy="{{ $y - 14 }}" rx="30" ry="5" fill="{{ $person['hairColor'] }}" stroke="{{ $line }}" stroke-width="3" />
-                    @break
-            @endswitch
-
-            {{-- 笑って細くなった目と、目じりのしわ --}}
-            <path
-                d="M{{ $x - 14 }} {{ $y }} q5 -6 10 0 M{{ $x + 4 }} {{ $y }} q5 -6 10 0"
-                fill="none"
-                stroke="{{ $line }}"
-                stroke-width="3"
-                stroke-linecap="round"
-            />
-            <path
-                d="M{{ $x - 21 }} {{ $y - 3 }} l-4 -3 M{{ $x + 21 }} {{ $y - 3 }} l4 -3"
-                stroke="{{ $line }}"
-                stroke-width="2"
-                stroke-linecap="round"
-            />
-
-            @if ($person['glasses'])
-                <circle cx="{{ $x - 9 }}" cy="{{ $y - 1 }}" r="8.5" fill="none" stroke="{{ $line }}" stroke-width="2.5" />
-                <circle cx="{{ $x + 9 }}" cy="{{ $y - 1 }}" r="8.5" fill="none" stroke="{{ $line }}" stroke-width="2.5" />
-            @endif
-
-            <ellipse cx="{{ $x - 18 }}" cy="{{ $y + 9 }}" rx="6" ry="4" fill="{{ $cheek }}" opacity="0.8" />
-            <ellipse cx="{{ $x + 18 }}" cy="{{ $y + 9 }}" rx="6" ry="4" fill="{{ $cheek }}" opacity="0.8" />
-            <path
-                d="M{{ $x - 10 }} {{ $y + 10 }} Q{{ $x }} {{ $y + 24 }} {{ $x + 10 }} {{ $y + 10 }} Z"
-                fill="{{ $mouth }}"
-                stroke="{{ $line }}"
-                stroke-width="2.5"
-                stroke-linejoin="round"
-            />
-
-            @if ($person['clap'])
-                <circle cx="{{ $x - 7 }}" cy="{{ $y + 52 }}" r="7" fill="{{ $skin }}" stroke="{{ $line }}" stroke-width="2.5" />
-                <circle cx="{{ $x + 7 }}" cy="{{ $y + 48 }}" r="7" fill="{{ $skin }}" stroke="{{ $line }}" stroke-width="2.5" />
-                <path
-                    d="M{{ $x - 19 }} {{ $y + 40 }} l-6 -5 M{{ $x + 20 }} {{ $y + 36 }} l6 -6"
-                    stroke="{{ $line }}"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                />
-            @endif
-        </g>
+        <x-illustration.elderly
+            :x="$person['x']"
+            :y="$person['y']"
+            :hair="$person['hair']"
+            :hair-color="$person['hairColor']"
+            :clothes="$person['clothes']"
+            :glasses="$person['glasses']"
+            :pose="$person['pose']"
+        />
     @endforeach
 </svg>
