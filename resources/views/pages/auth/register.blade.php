@@ -5,7 +5,12 @@
         <!-- Session Status -->
         <x-auth-session-status class="text-center" :status="session('status')" />
 
-        <form method="POST" action="{{ route('register.store') }}" class="flex flex-col gap-6">
+        <form
+            method="POST"
+            action="{{ route('register.store') }}"
+            class="flex flex-col gap-6"
+            x-data="{ role: @js(old('role', \App\Enums\UserRole::Visitor->value)) }"
+        >
             @csrf
             <!-- Name -->
             <flux:input
@@ -42,6 +47,7 @@
                                 name="role"
                                 value="{{ $role->value }}"
                                 class="size-4 accent-accent"
+                                x-model="role"
                                 @checked(old('role', \App\Enums\UserRole::Visitor->value) === $role->value)
                             />
                             <span>{{ $role->label() }}</span>
@@ -51,6 +57,38 @@
 
                 <flux:error name="role" />
             </fieldset>
+
+            <!-- Facility Number / Corporate Number（福祉施設を選んだときだけ出す） -->
+            <div
+                x-show="role === @js(\App\Enums\UserRole::Facility->value)"
+                @style(['display: none' => old('role') !== \App\Enums\UserRole::Facility->value])
+                class="flex flex-col gap-6"
+                data-test="facility-number-field"
+            >
+                <flux:input
+                    name="facility_number"
+                    label="事業所番号"
+                    description="介護保険事業所番号（10桁の数字）を入力してください。"
+                    :value="old('facility_number')"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="10"
+                    autocomplete="off"
+                    placeholder="1234567890"
+                />
+
+                <flux:input
+                    name="corporate_number"
+                    label="法人番号"
+                    description="施設を運営する法人の法人番号（13桁の数字）を入力してください。"
+                    :value="old('corporate_number')"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="13"
+                    autocomplete="off"
+                    placeholder="1234567890123"
+                />
+            </div>
 
             <!-- Password -->
             <flux:input

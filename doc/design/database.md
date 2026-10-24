@@ -21,6 +21,8 @@ erDiagram
         string email UK
         string password
         string role
+        string facility_number
+        string corporate_number
     }
     visits {
         bigint id PK
@@ -74,6 +76,8 @@ erDiagram
 | カラム | 型 | 制約 | 説明 |
 |-|-|-|-|
 | role | string | not null, default `visitor` | `visitor` / `facility` / `admin`。PHP の Enum にキャストする |
+| facility_number | string(10) | null 可 | 介護保険事業所番号（10桁の数字）。福祉施設の登録時は必須、それ以外は null。重複は許す（同じ施設の複数アカウントがありうる） |
+| corporate_number | string(13) | null 可 | 法人番号（13桁の数字）。福祉施設の登録時は必須で、先頭のチェック用の数字も確かめる（`App\Rules\CorporateNumber`）。それ以外は null。重複は許す（同じ法人が複数の施設を運営しうる） |
 
 ### visits
 

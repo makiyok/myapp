@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Rules\CorporateNumber;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -45,7 +46,19 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'role' => UserRole::Facility,
+            'facility_number' => fake()->numerify('##########'),
+            'corporate_number' => $this->corporateNumber(),
         ]);
+    }
+
+    /**
+     * チェック用の数字が合っている、架空の法人番号（13桁）
+     */
+    private function corporateNumber(): string
+    {
+        $base = fake()->numerify('############');
+
+        return CorporateNumber::checkDigit($base).$base;
     }
 
     /**

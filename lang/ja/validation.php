@@ -253,6 +253,8 @@ return [
         'restored_at' => '復元日',
         'result_text_under_image' => '画像下の結果テキスト',
         'role' => 'ロール',
+        'facility_number' => '事業所番号',
+        'corporate_number' => '法人番号',
         'rule' => 'ルール',
         'rules' => 'ルール',
         'second' => '秒',
