@@ -10,6 +10,7 @@
 
 @theme {
     --font-sans: 'Zen Maru Gothic', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mincho: 'Zen Old Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
 
     /* 細い文字は読みにくいので、本文を太字にし、見出しとボタンはさらに太くして差をつける */
     --font-weight-normal: 700;
