@@ -72,15 +72,17 @@ select:focus[data-flux-control] {
     @apply size-4;
 } */
 
-/* 絵本のようなやわらかい見た目 */
-body {
-    font-weight: var(--font-weight-normal);
-    background-image: radial-gradient(var(--color-zinc-200) 1.5px, transparent 1.5px);
-    background-size: 28px 28px;
-}
+/* 絵本のようなやわらかい見た目。base レイヤーに置き、ダークモードの dark:bg-linear-to-b などのクラスで上書きできるようにする */
+@layer base {
+    body {
+        font-weight: var(--font-weight-normal);
+        background-image: radial-gradient(var(--color-zinc-200) 1.5px, transparent 1.5px);
+        background-size: 28px 28px;
+    }
 
-.dark body {
-    background-image: none;
+    .dark body {
+        background-image: none;
+    }
 }
 
 [data-flux-heading] {
