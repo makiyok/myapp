@@ -50,7 +50,7 @@ new #[Title('慰問一覧')] class extends Component {
                     href="{{ route('visits.show', $visit) }}"
                     wire:navigate
                     wire:key="visit-{{ $visit->id }}"
-                    class="block space-y-2 rounded-xl border border-zinc-200 p-4 hover:border-zinc-400 dark:border-zinc-700 dark:hover:border-zinc-500"
+                    class="block space-y-2 rounded-xl border-2 border-zinc-400 p-4 transition hover:border-accent dark:border-zinc-500 dark:hover:border-accent"
                 >
                     <flux:heading size="lg" level="2">{{ $visit->title }}</flux:heading>
                     <flux:text>{{ $visit->starts_at->isoFormat('M月D日(ddd) HH:mm') }}</flux:text>
