@@ -33,7 +33,7 @@ test('guests can see a published visit with its pass types', function () {
         ->assertSee('2月2日(土) 16:30')
         ->assertSee('一般')
         ->assertSee('3,000円')
-        ->assertSee('42名')
+        ->assertSee('42組')
         ->assertSee('1月10日(木) 09:00')
         ->assertSee('2月1日(金) 18:00')
         ->assertSee('販売中');
@@ -88,8 +88,8 @@ test('the quantity select offers up to the smaller of 10 and the remaining count
     $this->get(route('visits.show', $visit))
         ->assertOk()
         ->assertSee("quantity-{$visitMenu->id}")
-        ->assertSee("{$max}名</option>", false)
-        ->assertDontSee(($max + 1).'名</option>', false)
+        ->assertSee("{$max}組</option>", false)
+        ->assertDontSee(($max + 1).'組</option>', false)
         ->assertSee('申し込み手続きへ進む');
 })->with([
     'fewer than 10 remaining' => [3, 3],

@@ -113,10 +113,10 @@ new #[Title('慰問詳細')] class extends Component {
                 <flux:table.columns>
                     <flux:table.column>メニュー名</flux:table.column>
                     <flux:table.column align="end">価格</flux:table.column>
-                    <flux:table.column align="end">残り人数</flux:table.column>
+                    <flux:table.column align="end">残り組数</flux:table.column>
                     <flux:table.column>販売期間</flux:table.column>
                     <flux:table.column></flux:table.column>
-                    <flux:table.column align="end">人数</flux:table.column>
+                    <flux:table.column align="end">組数</flux:table.column>
                 </flux:table.columns>
 
                 <flux:table.rows>
@@ -126,7 +126,7 @@ new #[Title('慰問詳細')] class extends Component {
                         <flux:table.row :key="$visitMenu->id">
                             <flux:table.cell>{{ $visitMenu->name }}</flux:table.cell>
                             <flux:table.cell align="end">{{ number_format($visitMenu->price) }}円</flux:table.cell>
-                            <flux:table.cell align="end">{{ number_format($remaining) }}名</flux:table.cell>
+                            <flux:table.cell align="end">{{ number_format($remaining) }}組</flux:table.cell>
                             <flux:table.cell>
                                 {{ $visitMenu->sales_starts_at->isoFormat('M月D日(ddd) HH:mm') }} 〜<br>
                                 {{ $visitMenu->sales_ends_at->isoFormat('M月D日(ddd) HH:mm') }}
@@ -147,11 +147,11 @@ new #[Title('慰問詳細')] class extends Component {
                                     <flux:select
                                         wire:model="quantities.{{ $visitMenu->id }}"
                                         class="w-24"
-                                        aria-label="{{ $visitMenu->name }}の人数"
+                                        aria-label="{{ $visitMenu->name }}の組数"
                                         data-test="quantity-{{ $visitMenu->id }}"
                                     >
                                         @foreach (range(0, $this->maxQuantity($remaining)) as $quantity)
-                                            <flux:select.option value="{{ $quantity }}">{{ $quantity }}名</flux:select.option>
+                                            <flux:select.option value="{{ $quantity }}">{{ $quantity }}組</flux:select.option>
                                         @endforeach
                                     </flux:select>
                                 @endif
