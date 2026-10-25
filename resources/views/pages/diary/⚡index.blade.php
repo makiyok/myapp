@@ -47,7 +47,7 @@ new #[Title('慰問日記')] class extends Component {
 <section class="w-full max-w-5xl space-y-6">
     <div class="space-y-2">
         <flux:heading size="xl" level="1">慰問日記</flux:heading>
-        <flux:text>慰問の様子を、写真とことばでお届けします。</flux:text>
+        <flux:text size="lg">慰問の様子を、写真とことばでお届けします。</flux:text>
     </div>
 
     @foreach ($this->entries as $entry)
@@ -66,20 +66,20 @@ new #[Title('慰問日記')] class extends Component {
                         <figure class="flex-1 space-y-2 rounded-2xl bg-zinc-50 p-4 dark:bg-white/10">
                             <figcaption class="flex items-center gap-2">
                                 <flux:icon :name="$voice['icon']" variant="solid" class="size-5 text-accent-content" />
-                                <flux:heading size="sm" level="3">{{ $voice['label'] }}</flux:heading>
+                                <flux:heading size="lg" level="3">{{ $voice['label'] }}</flux:heading>
                             </figcaption>
                             <blockquote>
-                                <flux:text>「{{ $voice['quote'] }}」</flux:text>
+                                <flux:text size="lg" class="leading-relaxed">「{{ $voice['quote'] }}」</flux:text>
                             </blockquote>
-                            <flux:text size="sm">{{ $voice['speaker'] }}</flux:text>
+                            <flux:text>{{ $voice['speaker'] }}</flux:text>
                         </figure>
                     @endforeach
                 </div>
             </div>
 
-            <flux:heading size="lg" level="2">{{ $entry['title'] }}</flux:heading>
+            <flux:heading size="lg" level="2" class="text-xl!">{{ $entry['title'] }}</flux:heading>
 
-            <flux:text>
+            <flux:text size="xl" class="leading-relaxed">
                 @foreach ($entry['body'] as $sentence)
                     {{ $sentence }}
                 @endforeach
