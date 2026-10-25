@@ -32,6 +32,7 @@ erDiagram
         string venue
         datetime starts_at
         datetime ends_at
+        string unit
         string status
     }
     visit_menus {
@@ -89,6 +90,7 @@ erDiagram
 | venue | string | not null | 会場 |
 | starts_at | datetime | not null, index | 開催日時。一覧の並び順と「開催済みを除く」に使う |
 | ends_at | datetime | not null | 終了日時。`starts_at` より後 |
+| unit | string | not null, default `person` | 申し込みの単位。`person`（人） / `group`（組。漫才のコンビなど1組で申し込む慰問）。PHP の Enum（`VisitUnit`）にキャストし、画面の「人数／組数」「3人／3組」と、メニューの定員の単位に使う |
 | status | string | not null, default `draft` | `draft`（下書き） / `published`（公開中） / `unpublished`（管理者が非公開にした状態。福祉施設は戻せない） |
 
 ### visit_menus

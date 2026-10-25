@@ -358,5 +358,15 @@ test('pass types are listed with formatted price and capacity', function () {
         ->test('pages::facility.visits.edit', ['visit' => $this->visit])
         ->assertSee('特別観覧席')
         ->assertSee('3,000円')
-        ->assertSee('50名');
+        ->assertSee('50人');
+});
+
+test('pass type capacity is shown in groups for a visit counted in groups', function () {
+    $visit = Visit::factory()->for($this->owner, 'facility')->group()->create();
+    VisitMenu::factory()->for($visit)->create(['capacity' => 50]);
+
+    Livewire::actingAs($this->owner)
+        ->test('pages::facility.visits.edit', ['visit' => $visit])
+        ->assertSee('50組')
+        ->assertSee('定員（組）');
 });

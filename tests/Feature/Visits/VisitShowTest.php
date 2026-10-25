@@ -33,10 +33,23 @@ test('guests can see a published visit with its pass types', function () {
         ->assertSee('2月2日(土) 16:30')
         ->assertSee('一般')
         ->assertSee('3,000円')
-        ->assertSee('42組')
+        ->assertSee('残り人数')
+        ->assertSee('42人')
         ->assertSee('1月10日(木) 09:00')
         ->assertSee('2月1日(金) 18:00')
         ->assertSee('販売中');
+});
+
+test('a visit counted in groups shows group counts instead of people', function () {
+    $visit = Visit::factory()->published()->group()->create();
+    VisitMenu::factory()->for($visit)->create(['capacity' => 5]);
+
+    $this->get(route('visits.show', $visit))
+        ->assertOk()
+        ->assertSee('残り組数')
+        ->assertSee('5組')
+        ->assertSee('5組</option>', false)
+        ->assertDontSee('人数');
 });
 
 test('each pass type shows its sales state', function (string $state, int $sold, string $label) {
@@ -88,8 +101,8 @@ test('the quantity select offers up to the smaller of 10 and the remaining count
     $this->get(route('visits.show', $visit))
         ->assertOk()
         ->assertSee("quantity-{$visitMenu->id}")
-        ->assertSee("{$max}組</option>", false)
-        ->assertDontSee(($max + 1).'組</option>', false)
+        ->assertSee("{$max}人</option>", false)
+        ->assertDontSee(($max + 1).'人</option>', false)
         ->assertSee('申し込み手続きへ進む');
 })->with([
     'fewer than 10 remaining' => [3, 3],

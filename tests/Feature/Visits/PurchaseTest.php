@@ -36,6 +36,15 @@ test('proceeding without choosing a quantity shows an error', function () {
     expect(session()->has("purchase.{$visit->id}"))->toBeFalse();
 });
 
+test('a visit counted in groups asks for the number of groups', function () {
+    $visit = Visit::factory()->published()->group()->create();
+    VisitMenu::factory()->for($visit)->create(['capacity' => 50]);
+
+    Livewire::test('pages::visits.show', ['visit' => $visit])
+        ->call('proceed')
+        ->assertHasErrors(['quantities' => '組数を選んでください。']);
+});
+
 test('guests are sent to login and come back to the purchase page', function () {
     $user = User::factory()->create();
     $visit = Visit::factory()->published()->create();
@@ -56,8 +65,20 @@ test('the purchase page lists the selected pass types with subtotals and the tot
         ->withSession(['purchase' => [$visit->id => [$general->id => 2, $student->id => 3]]])
         ->get(route('visits.purchase', $visit))
         ->assertOk()
-        ->assertSeeInOrder(['一般', '3,000円', '2名', '6,000円', '学生', '1,500円', '3名', '4,500円', '合計', '10,500円'])
+        ->assertSeeInOrder(['一般', '3,000円', '2人', '6,000円', '学生', '1,500円', '3人', '4,500円', '合計', '10,500円'])
         ->assertDontSee('ペア');
+});
+
+test('the purchase page shows quantities in groups for a visit counted in groups', function () {
+    $visit = Visit::factory()->published()->group()->create();
+    $visitMenu = VisitMenu::factory()->for($visit)->create(['price' => 500, 'capacity' => 10]);
+
+    $this->actingAs(User::factory()->create())
+        ->withSession(['purchase' => [$visit->id => [$visitMenu->id => 2]]])
+        ->get(route('visits.purchase', $visit))
+        ->assertOk()
+        ->assertSeeInOrder(['組数', '2組', '1,000円'])
+        ->assertSee('組数を選び直す');
 });
 
 test('the purchase page goes back to the visit when nothing is selected', function () {

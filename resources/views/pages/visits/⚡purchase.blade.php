@@ -121,7 +121,7 @@ new #[Title('申し込み内容の確認')] class extends Component {
         <flux:table.columns>
             <flux:table.column>メニュー名</flux:table.column>
             <flux:table.column align="end">価格</flux:table.column>
-            <flux:table.column align="end">人数</flux:table.column>
+            <flux:table.column align="end">{{ $visit->unit->countLabel() }}</flux:table.column>
             <flux:table.column align="end">小計</flux:table.column>
         </flux:table.columns>
 
@@ -130,7 +130,7 @@ new #[Title('申し込み内容の確認')] class extends Component {
                 <flux:table.row :key="$line['visitMenu']->id">
                     <flux:table.cell>{{ $line['visitMenu']->name }}</flux:table.cell>
                     <flux:table.cell align="end">{{ number_format($line['visitMenu']->price) }}円</flux:table.cell>
-                    <flux:table.cell align="end">{{ $line['quantity'] }}名</flux:table.cell>
+                    <flux:table.cell align="end">{{ $line['quantity'] }}{{ $visit->unit->label() }}</flux:table.cell>
                     <flux:table.cell align="end">{{ number_format($line['subtotal']) }}円</flux:table.cell>
                 </flux:table.row>
             @endforeach
@@ -143,7 +143,7 @@ new #[Title('申し込み内容の確認')] class extends Component {
     </div>
 
     <div class="flex justify-end gap-2">
-        <flux:button variant="ghost" :href="route('visits.show', $visit)" wire:navigate>人数を選び直す</flux:button>
+        <flux:button variant="ghost" :href="route('visits.show', $visit)" wire:navigate>{{ $visit->unit->countLabel() }}を選び直す</flux:button>
         <flux:button variant="primary" wire:click="checkout" data-test="checkout-button">支払いへ進む</flux:button>
     </div>
 </section>

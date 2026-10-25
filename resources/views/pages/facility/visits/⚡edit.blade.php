@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\VisitStatus;
+use App\Enums\VisitUnit;
 use App\Livewire\Forms\VisitForm;
 use App\Livewire\Forms\VisitMenuForm;
 use App\Models\Visit;
@@ -191,6 +192,12 @@ new #[Title('慰問編集')] class extends Component {
 
         <flux:input wire:model="form.venue" label="会場" type="text" required />
 
+        <flux:radio.group wire:model="form.unit" label="申し込みの単位" description="漫才のコンビなど、1組で申し込んでもらう慰問は「組」を選びます。">
+            @foreach (VisitUnit::cases() as $unit)
+                <flux:radio :value="$unit->value" :label="$unit->label().'（'.$unit->countLabel().'で数える）'" />
+            @endforeach
+        </flux:radio.group>
+
         <div class="grid gap-6 sm:grid-cols-2">
             <flux:input wire:model="form.starts_at" label="開始日時" type="datetime-local" required />
             <flux:input wire:model="form.ends_at" label="終了日時" type="datetime-local" required />
@@ -223,7 +230,7 @@ new #[Title('慰問編集')] class extends Component {
                         <flux:table.row :key="$visitMenu->id">
                             <flux:table.cell>{{ $visitMenu->name }}</flux:table.cell>
                             <flux:table.cell align="end">{{ number_format($visitMenu->price) }}円</flux:table.cell>
-                            <flux:table.cell align="end">{{ number_format($visitMenu->capacity) }}名</flux:table.cell>
+                            <flux:table.cell align="end">{{ number_format($visitMenu->capacity) }}{{ $visit->unit->label() }}</flux:table.cell>
                             <flux:table.cell>
                                 {{ $visitMenu->sales_starts_at->isoFormat('M月D日(ddd) HH:mm') }} 〜<br>
                                 {{ $visitMenu->sales_ends_at->isoFormat('M月D日(ddd) HH:mm') }}
@@ -256,7 +263,7 @@ new #[Title('慰問編集')] class extends Component {
 
             <div class="grid gap-4 sm:grid-cols-2">
                 <flux:input wire:model="visitMenuForm.price" label="価格（円）" type="number" min="0" step="1" inputmode="numeric" required />
-                <flux:input wire:model="visitMenuForm.capacity" label="定員（名）" type="number" min="1" step="1" inputmode="numeric" required />
+                <flux:input wire:model="visitMenuForm.capacity" :label="'定員（'.$visit->unit->label().'）'" type="number" min="1" step="1" inputmode="numeric" required />
             </div>
 
             <div class="grid gap-4 sm:grid-cols-2">

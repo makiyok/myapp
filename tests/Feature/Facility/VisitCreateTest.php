@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\VisitStatus;
+use App\Enums\VisitUnit;
 use App\Models\User;
 use App\Models\Visit;
 use Livewire\Livewire;
@@ -13,6 +14,7 @@ function validVisitInput(array $overrides = []): array
         'venue' => 'テスト会場',
         'starts_at' => now()->addDay()->format('Y-m-d\TH:i'),
         'ends_at' => now()->addDays(2)->format('Y-m-d\TH:i'),
+        'unit' => 'person',
     ], $overrides);
 }
 
@@ -39,6 +41,26 @@ test('an facility can create an visit as a draft', function () {
     $component->assertRedirect(route('facility.visits.edit', $visit));
 });
 
+test('a facility can choose to count entries in groups', function () {
+    $facility = User::factory()->facility()->create();
+
+    $component = Livewire::actingAs($facility)->test('pages::facility.visits.create');
+    fillVisitForm($component, validVisitInput(['unit' => 'group']))->call('save')->assertHasNoErrors();
+
+    expect(Visit::sole()->unit)->toBe(VisitUnit::Group);
+});
+
+test('the unit must be people or groups', function () {
+    $facility = User::factory()->facility()->create();
+
+    $component = Livewire::actingAs($facility)->test('pages::facility.visits.create');
+    fillVisitForm($component, validVisitInput(['unit' => 'family']))
+        ->call('save')
+        ->assertHasErrors(['form.unit']);
+
+    expect(Visit::count())->toBe(0);
+});
+
 test('all fields are required', function (string $field) {
     $facility = User::factory()->facility()->create();
 
@@ -48,7 +70,7 @@ test('all fields are required', function (string $field) {
         ->assertHasErrors(["form.$field" => 'required']);
 
     expect(Visit::count())->toBe(0);
-})->with(['title', 'description', 'venue', 'starts_at', 'ends_at']);
+})->with(['title', 'description', 'venue', 'starts_at', 'ends_at', 'unit']);
 
 test('title and venue are limited to 100 characters', function (string $field) {
     $facility = User::factory()->facility()->create();

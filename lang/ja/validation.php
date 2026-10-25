@@ -283,6 +283,7 @@ return [
         'time' => '時間',
         'title' => '慰問名',
         'type' => 'タイプ',
+        'unit' => '申し込みの単位',
         'updated_at' => '更新日',
         'user' => 'ユーザー',
         'username' => 'ユーザー名',
