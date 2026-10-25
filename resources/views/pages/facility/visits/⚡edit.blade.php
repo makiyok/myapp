@@ -170,7 +170,7 @@ new #[Title('慰問編集')] class extends Component {
     }
 }; ?>
 
-<section class="w-full max-w-2xl space-y-6">
+<section class="w-full max-w-2xl space-y-6 [&_td]:text-base [&_th]:text-base [&_[data-flux-label]]:text-base [&_input]:text-base [&_textarea]:text-base">
     <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
             <flux:heading size="xl" level="1">慰問編集</flux:heading>
@@ -204,10 +204,10 @@ new #[Title('慰問編集')] class extends Component {
     <flux:separator />
 
     <div class="space-y-4">
-        <flux:heading size="lg" level="2">メニュー</flux:heading>
+        <flux:heading size="lg" level="2" class="text-xl!">メニュー</flux:heading>
 
         @if ($this->visitMenus->isEmpty())
-            <flux:text>まだメニューがありません。下のフォームから追加してください。</flux:text>
+            <flux:text size="lg">まだメニューがありません。下のフォームから追加してください。</flux:text>
         @else
             <flux:table>
                 <flux:table.columns>
@@ -250,7 +250,7 @@ new #[Title('慰問編集')] class extends Component {
         <flux:error name="visitMenus" />
 
         <form wire:submit="saveVisitMenu" class="space-y-4 rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
-            <flux:heading level="3">{{ $editingVisitMenuId === null ? 'メニューを追加' : 'メニューを編集' }}</flux:heading>
+            <flux:heading size="lg" level="3">{{ $editingVisitMenuId === null ? 'メニューを追加' : 'メニューを編集' }}</flux:heading>
 
             <flux:input wire:model="visitMenuForm.name" label="メニュー名" type="text" placeholder="一般" required />
 
@@ -286,7 +286,7 @@ new #[Title('慰問編集')] class extends Component {
                 </flux:button>
 
                 @if (! $visit->isPublished() && $this->visitMenus->isEmpty())
-                    <flux:text class="mt-2">公開するにはメニューが1つ以上必要です。</flux:text>
+                    <flux:text size="lg" class="mt-2">公開するにはメニューが1つ以上必要です。</flux:text>
                 @endif
 
                 <flux:error name="publish" />
@@ -304,7 +304,7 @@ new #[Title('慰問編集')] class extends Component {
         <div class="space-y-6">
             <div>
                 <flux:heading size="lg">慰問を削除しますか？</flux:heading>
-                <flux:text class="mt-2">「{{ $visit->title }}」を削除します。この操作は取り消せません。</flux:text>
+                <flux:text size="lg" class="mt-2">「{{ $visit->title }}」を削除します。この操作は取り消せません。</flux:text>
             </div>
 
             <div class="flex justify-end gap-2">

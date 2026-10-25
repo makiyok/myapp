@@ -20,7 +20,7 @@ new #[Title('慰問管理')] class extends Component {
     }
 }; ?>
 
-<section class="w-full space-y-6">
+<section class="w-full space-y-6 [&_td]:text-base [&_th]:text-base">
     <div class="flex items-center justify-between">
         <flux:heading size="xl" level="1">慰問管理</flux:heading>
 
@@ -30,7 +30,7 @@ new #[Title('慰問管理')] class extends Component {
     </div>
 
     @if ($this->visits->isEmpty())
-        <flux:text>まだ慰問がありません。「慰問を登録」から作成できます。</flux:text>
+        <flux:text size="lg">まだ慰問がありません。「慰問を登録」から作成できます。</flux:text>
     @else
         <flux:table :paginate="$this->visits">
             <flux:table.columns>
@@ -46,7 +46,7 @@ new #[Title('慰問管理')] class extends Component {
                         <flux:table.cell>{{ $visit->title }}</flux:table.cell>
                         <flux:table.cell>{{ $visit->starts_at->isoFormat('M月D日(ddd) HH:mm') }}</flux:table.cell>
                         <flux:table.cell>
-                            <flux:badge size="sm" :color="$visit->status->color()">{{ $visit->status->label() }}</flux:badge>
+                            <flux:badge :color="$visit->status->color()">{{ $visit->status->label() }}</flux:badge>
                         </flux:table.cell>
                         <flux:table.cell align="end">
                             <flux:button size="sm" :href="route('facility.visits.edit', $visit)" wire:navigate>

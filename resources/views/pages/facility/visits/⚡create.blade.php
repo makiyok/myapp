@@ -30,7 +30,7 @@ new #[Title('慰問登録')] class extends Component {
     }
 }; ?>
 
-<section class="w-full max-w-2xl space-y-6">
+<section class="w-full max-w-2xl space-y-6 [&_[data-flux-label]]:text-base [&_input]:text-base [&_textarea]:text-base">
     <div class="flex items-center justify-between">
         <flux:heading size="xl" level="1">慰問登録</flux:heading>
 
