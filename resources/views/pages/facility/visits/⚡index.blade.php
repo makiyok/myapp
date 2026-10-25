@@ -20,7 +20,7 @@ new #[Title('慰問管理')] class extends Component {
     }
 }; ?>
 
-<section class="w-full space-y-6 [&_td]:text-base [&_th]:text-base">
+<section class="w-full space-y-6 [&_td]:text-lg [&_th]:text-lg [&_[data-flux-pagination]_*]:text-base">
     <div class="flex items-center justify-between">
         <flux:heading size="xl" level="1">慰問管理</flux:heading>
 
@@ -46,10 +46,10 @@ new #[Title('慰問管理')] class extends Component {
                         <flux:table.cell>{{ $visit->title }}</flux:table.cell>
                         <flux:table.cell>{{ $visit->starts_at->isoFormat('M月D日(ddd) HH:mm') }}</flux:table.cell>
                         <flux:table.cell>
-                            <flux:badge :color="$visit->status->color()">{{ $visit->status->label() }}</flux:badge>
+                            <flux:badge :color="$visit->status->color()" class="text-base!">{{ $visit->status->label() }}</flux:badge>
                         </flux:table.cell>
                         <flux:table.cell align="end">
-                            <flux:button size="sm" :href="route('facility.visits.edit', $visit)" wire:navigate>
+                            <flux:button :href="route('facility.visits.edit', $visit)" wire:navigate class="text-base!">
                                 編集
                             </flux:button>
                         </flux:table.cell>
