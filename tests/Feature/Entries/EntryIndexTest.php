@@ -1,8 +1,12 @@
 <?php
 
+use App\Enums\EntryStatus;
 use App\Models\Entry;
 use App\Models\User;
 use App\Models\Visit;
+use App\Services\CheckoutService;
+use Livewire\Livewire;
+use Stripe\Exception\ApiConnectionException;
 
 test('users see only their own entries', function () {
     $this->travelTo('2030-01-15 12:00:00');
@@ -37,6 +41,59 @@ test('a message is shown when there are no entries', function () {
         ->get(route('entries.index'))
         ->assertOk()
         ->assertSee('まだ申し込みがありません。');
+});
+
+test('only pending entries have a cancel button', function () {
+    $user = User::factory()->create();
+    $pending = Entry::factory()->for($user)->create();
+    $paid = Entry::factory()->for($user)->paid()->create();
+
+    $this->actingAs($user)
+        ->get(route('entries.index'))
+        ->assertSee('予約キャンセル')
+        ->assertSee('data-test="cancel-entry-'.$pending->id.'"', escape: false)
+        ->assertDontSee('data-test="cancel-entry-'.$paid->id.'"', escape: false);
+});
+
+test('cancelling a pending entry expires the Stripe session and removes it from the list', function () {
+    $user = User::factory()->create();
+    $entry = Entry::factory()->for($user)->for(Visit::factory()->published()->state(['title' => '取り消す慰問']))
+        ->create(['stripe_checkout_session_id' => 'cs_test_123']);
+    $this->mock(CheckoutService::class)->shouldReceive('expireSession')->once()->with('cs_test_123');
+
+    Livewire::actingAs($user)
+        ->test('pages::entries.index')
+        ->assertSee('取り消す慰問')
+        ->call('cancelEntry', $entry->id)
+        ->assertDontSee('取り消す慰問');
+
+    expect($entry->fresh()->status)->toBe(EntryStatus::Cancelled);
+});
+
+test('the entry stays pending when Stripe cannot be reached', function () {
+    $user = User::factory()->create();
+    $entry = Entry::factory()->for($user)->create(['stripe_checkout_session_id' => 'cs_test_123']);
+    $checkout = $this->mock(CheckoutService::class);
+    $checkout->shouldReceive('expireSession')->andThrow(new ApiConnectionException('network down'));
+    $checkout->shouldReceive('retrieveSession')->andThrow(new ApiConnectionException('network down'));
+
+    Livewire::actingAs($user)
+        ->test('pages::entries.index')
+        ->call('cancelEntry', $entry->id);
+
+    expect($entry->fresh()->status)->toBe(EntryStatus::Pending);
+});
+
+test('users cannot cancel entries of other users', function () {
+    $entry = Entry::factory()->create(['stripe_checkout_session_id' => 'cs_test_123']);
+    $this->mock(CheckoutService::class)->shouldNotReceive('expireSession');
+
+    Livewire::actingAs(User::factory()->create())
+        ->test('pages::entries.index')
+        ->call('cancelEntry', $entry->id)
+        ->assertForbidden();
+
+    expect($entry->fresh()->status)->toBe(EntryStatus::Pending);
 });
 
 test('guests are redirected to login', function () {

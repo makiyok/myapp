@@ -2,7 +2,9 @@
 
 namespace App\Concerns;
 
+use App\Enums\VisitUnit;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Validation\Rule;
 
 trait VisitValidationRules
 {
@@ -21,6 +23,7 @@ trait VisitValidationRules
             'venue' => ['required', 'string', 'max:100'],
             'starts_at' => ['required', 'date_format:Y-m-d\TH:i'],
             'ends_at' => ['required', 'date_format:Y-m-d\TH:i', 'after:starts_at'],
+            'unit' => ['required', Rule::enum(VisitUnit::class)],
         ];
     }
 }

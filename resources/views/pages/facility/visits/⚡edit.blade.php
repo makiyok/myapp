@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\VisitStatus;
+use App\Enums\VisitUnit;
 use App\Livewire\Forms\VisitForm;
 use App\Livewire\Forms\VisitMenuForm;
 use App\Models\Visit;
@@ -170,7 +171,7 @@ new #[Title('慰問編集')] class extends Component {
     }
 }; ?>
 
-<section class="w-full max-w-2xl space-y-6">
+<section class="w-full max-w-2xl space-y-6 [&_td]:text-base [&_th]:text-base [&_[data-flux-label]]:text-base [&_input]:text-base [&_textarea]:text-base">
     <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
             <flux:heading size="xl" level="1">慰問編集</flux:heading>
@@ -191,6 +192,12 @@ new #[Title('慰問編集')] class extends Component {
 
         <flux:input wire:model="form.venue" label="会場" type="text" required />
 
+        <flux:radio.group wire:model="form.unit" label="申し込みの単位" description="漫才のコンビなど、1組で申し込んでもらう慰問は「組」を選びます。">
+            @foreach (VisitUnit::cases() as $unit)
+                <flux:radio :value="$unit->value" :label="$unit->label().'（'.$unit->countLabel().'で数える）'" />
+            @endforeach
+        </flux:radio.group>
+
         <div class="grid gap-6 sm:grid-cols-2">
             <flux:input wire:model="form.starts_at" label="開始日時" type="datetime-local" required />
             <flux:input wire:model="form.ends_at" label="終了日時" type="datetime-local" required />
@@ -204,10 +211,10 @@ new #[Title('慰問編集')] class extends Component {
     <flux:separator />
 
     <div class="space-y-4">
-        <flux:heading size="lg" level="2">メニュー</flux:heading>
+        <flux:heading size="lg" level="2" class="text-xl!">メニュー</flux:heading>
 
         @if ($this->visitMenus->isEmpty())
-            <flux:text>まだメニューがありません。下のフォームから追加してください。</flux:text>
+            <flux:text size="lg">まだメニューがありません。下のフォームから追加してください。</flux:text>
         @else
             <flux:table>
                 <flux:table.columns>
@@ -223,7 +230,7 @@ new #[Title('慰問編集')] class extends Component {
                         <flux:table.row :key="$visitMenu->id">
                             <flux:table.cell>{{ $visitMenu->name }}</flux:table.cell>
                             <flux:table.cell align="end">{{ number_format($visitMenu->price) }}円</flux:table.cell>
-                            <flux:table.cell align="end">{{ number_format($visitMenu->capacity) }}名</flux:table.cell>
+                            <flux:table.cell align="end">{{ number_format($visitMenu->capacity) }}{{ $visit->unit->label() }}</flux:table.cell>
                             <flux:table.cell>
                                 {{ $visitMenu->sales_starts_at->isoFormat('M月D日(ddd) HH:mm') }} 〜<br>
                                 {{ $visitMenu->sales_ends_at->isoFormat('M月D日(ddd) HH:mm') }}
@@ -250,13 +257,13 @@ new #[Title('慰問編集')] class extends Component {
         <flux:error name="visitMenus" />
 
         <form wire:submit="saveVisitMenu" class="space-y-4 rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
-            <flux:heading level="3">{{ $editingVisitMenuId === null ? 'メニューを追加' : 'メニューを編集' }}</flux:heading>
+            <flux:heading size="lg" level="3">{{ $editingVisitMenuId === null ? 'メニューを追加' : 'メニューを編集' }}</flux:heading>
 
             <flux:input wire:model="visitMenuForm.name" label="メニュー名" type="text" placeholder="一般" required />
 
             <div class="grid gap-4 sm:grid-cols-2">
                 <flux:input wire:model="visitMenuForm.price" label="価格（円）" type="number" min="0" step="1" inputmode="numeric" required />
-                <flux:input wire:model="visitMenuForm.capacity" label="定員（名）" type="number" min="1" step="1" inputmode="numeric" required />
+                <flux:input wire:model="visitMenuForm.capacity" :label="'定員（'.$visit->unit->label().'）'" type="number" min="1" step="1" inputmode="numeric" required />
             </div>
 
             <div class="grid gap-4 sm:grid-cols-2">
@@ -286,7 +293,7 @@ new #[Title('慰問編集')] class extends Component {
                 </flux:button>
 
                 @if (! $visit->isPublished() && $this->visitMenus->isEmpty())
-                    <flux:text class="mt-2">公開するにはメニューが1つ以上必要です。</flux:text>
+                    <flux:text size="lg" class="mt-2">公開するにはメニューが1つ以上必要です。</flux:text>
                 @endif
 
                 <flux:error name="publish" />
@@ -304,7 +311,7 @@ new #[Title('慰問編集')] class extends Component {
         <div class="space-y-6">
             <div>
                 <flux:heading size="lg">慰問を削除しますか？</flux:heading>
-                <flux:text class="mt-2">「{{ $visit->title }}」を削除します。この操作は取り消せません。</flux:text>
+                <flux:text size="lg" class="mt-2">「{{ $visit->title }}」を削除します。この操作は取り消せません。</flux:text>
             </div>
 
             <div class="flex justify-end gap-2">

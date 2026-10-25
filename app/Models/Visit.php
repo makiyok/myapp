@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\VisitStatus;
+use App\Enums\VisitUnit;
 use Database\Factories\VisitFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,11 +21,12 @@ use Illuminate\Support\Carbon;
  * @property string $venue
  * @property Carbon $starts_at
  * @property Carbon $ends_at
+ * @property VisitUnit $unit
  * @property VisitStatus $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['title', 'description', 'venue', 'starts_at', 'ends_at'])]
+#[Fillable(['title', 'description', 'venue', 'starts_at', 'ends_at', 'unit'])]
 class Visit extends Model
 {
     /** @use HasFactory<VisitFactory> */
@@ -40,6 +42,7 @@ class Visit extends Model
         return [
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
+            'unit' => VisitUnit::class,
             'status' => VisitStatus::class,
         ];
     }

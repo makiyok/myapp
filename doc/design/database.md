@@ -21,6 +21,8 @@ erDiagram
         string email UK
         string password
         string role
+        string facility_number
+        string corporate_number
     }
     visits {
         bigint id PK
@@ -30,6 +32,7 @@ erDiagram
         string venue
         datetime starts_at
         datetime ends_at
+        string unit
         string status
     }
     visit_menus {
@@ -74,6 +77,8 @@ erDiagram
 | カラム | 型 | 制約 | 説明 |
 |-|-|-|-|
 | role | string | not null, default `visitor` | `visitor` / `facility` / `admin`。PHP の Enum にキャストする |
+| facility_number | string(10) | null 可 | 介護保険事業所番号（10桁の数字）。福祉施設の登録時は必須（数字10桁の確認は本番だけ。開発環境では10文字までなら何でも通す）、それ以外は null。重複は許す（同じ施設の複数アカウントがありうる） |
+| corporate_number | string(13) | null 可 | 法人番号（13桁の数字）。福祉施設の登録時は必須で、本番では数字13桁と先頭のチェック用の数字も確かめる（`App\Rules\CorporateNumber`）。開発環境では13文字までなら何でも通す。それ以外は null。重複は許す（同じ法人が複数の施設を運営しうる） |
 
 ### visits
 
@@ -85,6 +90,7 @@ erDiagram
 | venue | string | not null | 会場 |
 | starts_at | datetime | not null, index | 開催日時。一覧の並び順と「開催済みを除く」に使う |
 | ends_at | datetime | not null | 終了日時。`starts_at` より後 |
+| unit | string | not null, default `person` | 申し込みの単位。`person`（人） / `group`（組。漫才のコンビなど1組で申し込む慰問）。PHP の Enum（`VisitUnit`）にキャストし、画面の「人数／組数」「3人／3組」と、メニューの定員の単位に使う |
 | status | string | not null, default `draft` | `draft`（下書き） / `published`（公開中） / `unpublished`（管理者が非公開にした状態。福祉施設は戻せない） |
 
 ### visit_menus

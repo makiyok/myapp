@@ -7,6 +7,8 @@ Route::livewire('/', 'pages::visits.index')->name('home');
 
 Route::livewire('visits/{visit}', 'pages::visits.show')->name('visits.show');
 
+Route::livewire('diary', 'pages::diary.index')->name('diary.index');
+
 Route::post('stripe/webhook', StripeWebhookController::class)->name('stripe.webhook');
 
 Route::middleware('auth')->group(function () {

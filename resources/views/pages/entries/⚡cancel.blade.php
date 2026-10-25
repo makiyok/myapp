@@ -1,11 +1,11 @@
 <?php
 
+use App\Enums\EntryCancelResult;
 use App\Models\Entry;
 use App\Services\CheckoutService;
 use App\Services\EntryService;
 use Livewire\Attributes\Title;
 use Livewire\Component;
-use Stripe\Exception\ApiErrorException;
 
 new #[Title('支払いを中断しました')] class extends Component {
     public Entry $entry;
@@ -18,58 +18,23 @@ new #[Title('支払いを中断しました')] class extends Component {
     }
 
     /**
-     * 申し込みを取り消す。先に Stripe の決済ページを失効させ、取り消した後に支払われないようにする。
-     *
-     * 失効できなかったときは Stripe に状態を聞く。支払い済みなら確定し、失効済みなら取り消す。
-     * どちらとも分からないときは、お金の取りこぼしを避けるため取り消さない。
+     * 申し込みを取り消す。Stripe の決済ページの扱いは EntryService::cancelPending() に任せる。
      */
     public function cancelEntry(EntryService $entryService, CheckoutService $checkoutService): void
     {
         $this->authorize('cancel', $this->entry);
 
         $this->resetErrorBag('cancel');
-        $this->entry->refresh();
 
-        if (! $this->entry->isPending()) {
-            return;
+        $result = $entryService->cancelPending($this->entry, $checkoutService);
+
+        if ($result === EntryCancelResult::Paid) {
+            $this->redirectRoute('entries.complete', $this->entry);
         }
 
-        $sessionId = $this->entry->stripe_checkout_session_id;
-
-        if ($sessionId !== null) {
-            try {
-                $checkoutService->expireSession($sessionId);
-            } catch (ApiErrorException $e) {
-                try {
-                    $session = $checkoutService->retrieveSession($sessionId);
-                } catch (ApiErrorException $retrieveError) {
-                    report($retrieveError);
-
-                    $this->addError('cancel', '取り消せませんでした。時間をおいてもう一度お試しください。');
-
-                    return;
-                }
-
-                if ($session->payment_status === 'paid') {
-                    $paymentIntentId = is_string($session->payment_intent ?? null) ? $session->payment_intent : null;
-                    $entryService->markAsPaid($this->entry, $paymentIntentId);
-
-                    $this->redirectRoute('entries.complete', $this->entry);
-
-                    return;
-                }
-
-                if (($session->status ?? null) !== 'expired') {
-                    report($e);
-
-                    $this->addError('cancel', '取り消せませんでした。時間をおいてもう一度お試しください。');
-
-                    return;
-                }
-            }
+        if ($result === EntryCancelResult::Failed) {
+            $this->addError('cancel', '取り消せませんでした。時間をおいてもう一度お試しください。');
         }
-
-        $this->entry->cancelIfPending();
     }
 }; ?>
 

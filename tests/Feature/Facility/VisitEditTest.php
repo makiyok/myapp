@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\VisitStatus;
+use App\Enums\VisitUnit;
 use App\Models\User;
 use App\Models\Visit;
 use App\Models\VisitMenu;
@@ -18,7 +19,9 @@ test('the owner can update the visit', function () {
     Livewire::actingAs($this->owner)
         ->test('pages::facility.visits.edit', ['visit' => $this->visit])
         ->assertSet('form.title', $this->visit->title)
+        ->assertSet('form.unit', 'person')
         ->set('form.title', '更新後のタイトル')
+        ->set('form.unit', 'group')
         ->set('form.starts_at', $startsAt)
         ->set('form.ends_at', $endsAt)
         ->call('save')
@@ -26,6 +29,7 @@ test('the owner can update the visit', function () {
 
     $fresh = $this->visit->fresh();
     expect($fresh->title)->toBe('更新後のタイトル')
+        ->and($fresh->unit)->toBe(VisitUnit::Group)
         ->and($fresh->starts_at->format('Y-m-d\TH:i'))->toBe($startsAt)
         ->and($fresh->facility_id)->toBe($this->owner->id);
 });

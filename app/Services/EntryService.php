@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\EntryCancelResult;
 use App\Enums\EntryStatus;
 use App\Exceptions\PurchaseException;
 use App\Models\Entry;
@@ -10,6 +11,7 @@ use App\Models\Visit;
 use App\Models\VisitMenu;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Stripe\Exception\ApiErrorException;
 
 class EntryService
 {
@@ -113,6 +115,52 @@ class EntryService
 
             return true;
         });
+    }
+
+    /**
+     * 支払い待ちの申し込みを取り消す。先に Stripe の決済ページを失効させ、取り消した後に支払われないようにする。
+     *
+     * 失効できなかったときは Stripe に状態を聞く。支払い済みなら確定し、失効済みなら取り消す。
+     * どちらとも分からないときは、お金の取りこぼしを避けるため取り消さない。
+     */
+    public function cancelPending(Entry $entry, CheckoutService $checkoutService): EntryCancelResult
+    {
+        $entry->refresh();
+
+        if (! $entry->isPending()) {
+            return EntryCancelResult::NotPending;
+        }
+
+        $sessionId = $entry->stripe_checkout_session_id;
+
+        if ($sessionId !== null) {
+            try {
+                $checkoutService->expireSession($sessionId);
+            } catch (ApiErrorException $e) {
+                try {
+                    $session = $checkoutService->retrieveSession($sessionId);
+                } catch (ApiErrorException $retrieveError) {
+                    report($retrieveError);
+
+                    return EntryCancelResult::Failed;
+                }
+
+                if ($session->payment_status === 'paid') {
+                    $paymentIntentId = is_string($session->payment_intent ?? null) ? $session->payment_intent : null;
+                    $this->markAsPaid($entry, $paymentIntentId);
+
+                    return EntryCancelResult::Paid;
+                }
+
+                if (($session->status ?? null) !== 'expired') {
+                    report($e);
+
+                    return EntryCancelResult::Failed;
+                }
+            }
+        }
+
+        return $entry->cancelIfPending() ? EntryCancelResult::Cancelled : EntryCancelResult::NotPending;
     }
 
     /**

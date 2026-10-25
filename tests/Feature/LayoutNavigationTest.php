@@ -37,11 +37,11 @@ test('visitors see my passes and settings but no facility or admin links', funct
         ->assertDontSee('ユーザー管理');
 });
 
-test('facilities also see the facility menu', function () {
+test('facilities see the facility menu instead of my passes', function () {
     $this->actingAs(User::factory()->facility()->create());
 
     renderAppLayout()
-        ->assertSee('マイ参加証')
+        ->assertDontSee('マイ参加証')
         ->assertSee('福祉施設メニュー')
         ->assertSee(route('facility.visits.index'))
         ->assertDontSee('慰問管理')
@@ -58,6 +58,23 @@ test('admins also see visit and user management', function () {
         ->assertSee('ユーザー管理')
         ->assertSee(url('/admin/users'))
         ->assertDontSee('福祉施設メニュー');
+});
+
+test('settings is only in the user menu, not in the top menu', function () {
+    $this->actingAs(User::factory()->create());
+
+    $html = (string) renderAppLayout();
+
+    expect(substr_count($html, 'href="'.route('profile.edit').'"'))->toBe(1)
+        ->and($html)->toContain('設定')
+        ->and($html)->toContain('ログアウト');
+});
+
+test('the logo at the top left reads 慰問ステージ', function () {
+    $this->get(route('diary.index'))
+        ->assertOk()
+        ->assertSee('data-flux-brand', escape: false)
+        ->assertSeeInOrder(['data-flux-brand', '慰問ステージ'], escape: false);
 });
 
 test('a logged-in page still renders inside the header layout', function () {

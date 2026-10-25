@@ -1,28 +1,33 @@
-<x-layouts::auth :title="__('Register')">
+<x-layouts::auth title="会員登録">
     <div class="flex flex-col gap-6">
-        <x-auth-header :title="__('Create an account')" :description="__('Enter your details below to create your account')" />
+        <x-auth-header title="アカウントを作成" description="アカウント作成に必要な情報を入力してください" />
 
         <!-- Session Status -->
         <x-auth-session-status class="text-center" :status="session('status')" />
 
-        <form method="POST" action="{{ route('register.store') }}" class="flex flex-col gap-6">
+        <form
+            method="POST"
+            action="{{ route('register.store') }}"
+            class="flex flex-col gap-6"
+            x-data="{ role: @js(old('role', \App\Enums\UserRole::Visitor->value)) }"
+        >
             @csrf
             <!-- Name -->
             <flux:input
                 name="name"
-                :label="__('Name')"
+                label="名前"
                 :value="old('name')"
                 type="text"
                 required
                 autofocus
                 autocomplete="name"
-                :placeholder="__('Full name')"
+                placeholder="氏名"
             />
 
             <!-- Email Address -->
             <flux:input
                 name="email"
-                :label="__('Email address')"
+                label="メールアドレス"
                 :value="old('email')"
                 type="email"
                 required
@@ -31,19 +36,68 @@
             />
 
             <!-- Role -->
-            <flux:radio.group name="role" error:name="role" :label="__('Account type')" :value="old('role', 'visitor')">
-                <flux:radio value="visitor" :label="\App\Enums\UserRole::Visitor->label()" />
-                <flux:radio value="facility" :label="\App\Enums\UserRole::Facility->label()" />
-            </flux:radio.group>
+            <fieldset class="grid gap-2">
+                <legend class="mb-2 text-sm font-medium text-zinc-800 dark:text-white">登録の種類</legend>
+
+                <div class="flex flex-wrap gap-3">
+                    @foreach ([\App\Enums\UserRole::Visitor, \App\Enums\UserRole::Facility] as $role)
+                        <label class="flex cursor-pointer items-center gap-2 rounded-2xl border-2 border-zinc-200 px-4 py-2 text-zinc-800 has-checked:border-accent has-checked:bg-zinc-50 dark:text-white dark:has-checked:bg-white/10">
+                            <input
+                                type="radio"
+                                name="role"
+                                value="{{ $role->value }}"
+                                class="size-4 accent-accent"
+                                x-model="role"
+                                @checked(old('role', \App\Enums\UserRole::Visitor->value) === $role->value)
+                            />
+                            <span>{{ $role->label() }}</span>
+                        </label>
+                    @endforeach
+                </div>
+
+                <flux:error name="role" />
+            </fieldset>
+
+            <!-- Facility Number / Corporate Number（福祉施設を選んだときだけ出す） -->
+            <div
+                x-show="role === @js(\App\Enums\UserRole::Facility->value)"
+                @style(['display: none' => old('role') !== \App\Enums\UserRole::Facility->value])
+                class="flex flex-col gap-6"
+                data-test="facility-number-field"
+            >
+                <flux:input
+                    name="facility_number"
+                    label="事業所番号"
+                    description="介護保険事業所番号（10桁の数字）を入力してください。"
+                    :value="old('facility_number')"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="10"
+                    autocomplete="off"
+                    placeholder="1234567890"
+                />
+
+                <flux:input
+                    name="corporate_number"
+                    label="法人番号"
+                    description="施設を運営する法人の法人番号（13桁の数字）を入力してください。"
+                    :value="old('corporate_number')"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="13"
+                    autocomplete="off"
+                    placeholder="1234567890123"
+                />
+            </div>
 
             <!-- Password -->
             <flux:input
                 name="password"
-                :label="__('Password')"
+                label="パスワード"
                 type="password"
                 required
                 autocomplete="new-password"
-                :placeholder="__('Password')"
+                placeholder="パスワード"
                 passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
                 viewable
             />
@@ -51,25 +105,25 @@
             <!-- Confirm Password -->
             <flux:input
                 name="password_confirmation"
-                :label="__('Confirm password')"
+                label="パスワードの確認"
                 type="password"
                 required
                 autocomplete="new-password"
-                :placeholder="__('Confirm password')"
+                placeholder="パスワードの確認"
                 passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
                 viewable
             />
 
             <div class="flex items-center justify-end">
                 <flux:button type="submit" variant="primary" class="w-full" data-test="register-user-button">
-                    {{ __('Create account') }}
+                    アカウントを作成
                 </flux:button>
             </div>
         </form>
 
         <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
-            <span>{{ __('Already have an account?') }}</span>
-            <flux:link :href="route('login')" wire:navigate>{{ __('Log in') }}</flux:link>
+            <span>すでにアカウントをお持ちですか？</span>
+            <flux:link :href="route('login')" wire:navigate>ログイン</flux:link>
         </div>
     </div>
 </x-layouts::auth>

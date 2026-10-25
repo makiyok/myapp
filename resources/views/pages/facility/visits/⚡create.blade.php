@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\VisitUnit;
 use App\Livewire\Forms\VisitForm;
 use App\Models\Visit;
 use Flux\Flux;
@@ -30,7 +31,7 @@ new #[Title('慰問登録')] class extends Component {
     }
 }; ?>
 
-<section class="w-full max-w-2xl space-y-6">
+<section class="w-full max-w-2xl space-y-6 [&_[data-flux-label]]:text-base [&_input]:text-base [&_textarea]:text-base">
     <div class="flex items-center justify-between">
         <flux:heading size="xl" level="1">慰問登録</flux:heading>
 
@@ -43,6 +44,12 @@ new #[Title('慰問登録')] class extends Component {
         <flux:textarea wire:model="form.description" label="説明" rows="6" required />
 
         <flux:input wire:model="form.venue" label="会場" type="text" required />
+
+        <flux:radio.group wire:model="form.unit" label="申し込みの単位" description="漫才のコンビなど、1組で申し込んでもらう慰問は「組」を選びます。">
+            @foreach (VisitUnit::cases() as $unit)
+                <flux:radio :value="$unit->value" :label="$unit->label().'（'.$unit->countLabel().'で数える）'" />
+            @endforeach
+        </flux:radio.group>
 
         <div class="grid gap-6 sm:grid-cols-2">
             <flux:input wire:model="form.starts_at" label="開始日時" type="datetime-local" required />

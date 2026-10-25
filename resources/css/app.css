@@ -10,6 +10,12 @@
 
 @theme {
     --font-sans: 'Zen Maru Gothic', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mincho: 'Zen Old Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+
+    /* 細い文字は読みにくいので、本文を太字にし、見出しとボタンはさらに太くして差をつける */
+    --font-weight-normal: 700;
+    --font-weight-medium: 700;
+    --font-weight-bold: 900;
 
     --color-white: #fffdf7;
 
@@ -67,14 +73,17 @@ select:focus[data-flux-control] {
     @apply size-4;
 } */
 
-/* 絵本のようなやわらかい見た目 */
-body {
-    background-image: radial-gradient(var(--color-zinc-200) 1.5px, transparent 1.5px);
-    background-size: 28px 28px;
-}
+/* 絵本のようなやわらかい見た目。base レイヤーに置き、ダークモードの dark:bg-linear-to-b などのクラスで上書きできるようにする */
+@layer base {
+    body {
+        font-weight: var(--font-weight-normal);
+        background-image: radial-gradient(var(--color-zinc-200) 1.5px, transparent 1.5px);
+        background-size: 28px 28px;
+    }
 
-.dark body {
-    background-image: none;
+    .dark body {
+        background-image: none;
+    }
 }
 
 [data-flux-heading] {

@@ -31,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
 
     /**
      * Configure default behaviors for production-ready applications.
+     *
+     * パスワードは本番だけ強さを求める。開発環境では動作確認やデモのため、1文字から登録できる。
      */
     protected function configureDefaults(): void
     {
@@ -40,14 +42,14 @@ class AppServiceProvider extends ServiceProvider
             app()->isProduction(),
         );
 
-        Password::defaults(fn (): ?Password => app()->isProduction()
+        Password::defaults(fn (): Password => app()->isProduction()
             ? Password::min(12)
                 ->mixedCase()
                 ->letters()
                 ->numbers()
                 ->symbols()
                 ->uncompromised()
-            : null,
+            : Password::min(1),
         );
     }
 }

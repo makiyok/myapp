@@ -24,6 +24,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property UserRole $role
+ * @property string|null $facility_number 介護保険事業所番号（10桁）。福祉施設だけが持つ
+ * @property string|null $corporate_number 法人番号（13桁）。福祉施設だけが持つ
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at

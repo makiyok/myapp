@@ -21,6 +21,11 @@ class VisitForm extends Form
     public string $ends_at = '';
 
     /**
+     * 申し込みの単位（VisitUnit の値）
+     */
+    public string $unit = 'person';
+
+    /**
      * @return array<string, mixed>
      */
     protected function rules(): array
@@ -38,5 +43,6 @@ class VisitForm extends Form
         $this->venue = $visit->venue;
         $this->starts_at = $visit->starts_at->format('Y-m-d\TH:i');
         $this->ends_at = $visit->ends_at->format('Y-m-d\TH:i');
+        $this->unit = $visit->unit->value;
     }
 }

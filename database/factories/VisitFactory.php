@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\VisitStatus;
+use App\Enums\VisitUnit;
 use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -28,8 +29,17 @@ class VisitFactory extends Factory
             'venue' => fake()->city(),
             'starts_at' => $startsAt,
             'ends_at' => (clone $startsAt)->modify('+2 hours'),
+            'unit' => VisitUnit::Person,
             'status' => VisitStatus::Draft,
         ];
+    }
+
+    /**
+     * 1組ずつ申し込む慰問（漫才のコンビなど）
+     */
+    public function group(): static
+    {
+        return $this->state(fn (array $attributes) => ['unit' => VisitUnit::Group]);
     }
 
     public function draft(): static
